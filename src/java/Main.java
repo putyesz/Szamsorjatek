@@ -3,19 +3,24 @@ import java.util.Random;
 
 public class Main {
 
+    /**
+     *
+     *
+     * @param args kezdeti argumentumok
+     */
     public static void main(String[] args) {
         String futasszam = "10";
         int[] b_eredmeny = new int[3];
         long startTime = System.currentTimeMillis();
 	    for (int i = 0; i < 10_000; i++){
             switch (jatek()){
-                case -1:
+                case 1:
                     b_eredmeny[0]++;
                     break;
                 case 0:
                     b_eredmeny[1]++;
                     break;
-                case 1:
+                case -1:
                     b_eredmeny[2]++;
                     break;
             }
@@ -25,8 +30,19 @@ public class Main {
                 futasszam += "0";
             }
         }
-        System.out.println("\nB statisztikái:\nNyertes: " + b_eredmeny[0] + " Döntetlen: " + b_eredmeny[1] + " Vesztes: " + b_eredmeny[2]);
+        System.out.println("\nB statisztikái:\nNyertes: " + b_eredmeny[0] +
+                " Döntetlen: " + b_eredmeny[1] + " Vesztes: " + b_eredmeny[2]);
     }
+
+    /**
+     * Egy játékmenet lejátszása.
+     *
+     * Legeneráljuk a random számsort 0 és 10000 között.
+     * Kezdetben a kezdő játékos a generált számsor első eleme alapján lesz kiválasztva.
+     * Majd minden körben hozzáadjuk a kiválasztott számértéket az aktuális játékos összegéhez.
+     *
+     * @return -1, 0, 1 értékekkel térünk vissza, hogy B vesztett, nyert vagy döntetlen játszmát játszott
+     */
     private static int jatek() {
         LinkedList<Integer> sor = new LinkedList <>();
         for (int i = 0; i < 1_000; i ++){
@@ -55,6 +71,12 @@ public class Main {
         return Integer.compare(b_szamai, a_szamai);
     }
 
+    /**
+     * B játékos stratégiája az megfelelő elem kiválasztására.
+     *
+     * @param sor amely tartalmazza a számokat
+     * @return a sor utolsó elemével tér vissza
+     */
     private static int bStrategia(LinkedList <Integer> sor) {
 
         //return sor.getFirst();

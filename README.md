@@ -7,3 +7,5 @@ Két játékos játszik egymás ellen, ahol a sor elejéről vagy végéről vá
 **B** játékosnak saját stratégiája van.
 
 A végén az nyer, akinek a kiválasztott számainak összege nagyobb.
+
+Jelenleg 40-50% nyerés B  számára.

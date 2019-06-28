@@ -1,18 +1,15 @@
+import org.jetbrains.annotations.NotNull;
+
 import java.util.LinkedList;
 import java.util.Random;
 
 public class Main {
 
-    /**
-     *
-     *
-     * @param args kezdeti argumentumok
-     */
     public static void main(String[] args) {
-        String futasszam = "10";
+        int futasszam = 10;
         int[] b_eredmeny = new int[3];
         long startTime = System.currentTimeMillis();
-	    for (int i = 0; i < 10_000; i++){
+	    for (int i = 1; i <= 1_000_000; i++){
             switch (jatek()){
                 case 1:
                     b_eredmeny[0]++;
@@ -24,10 +21,10 @@ public class Main {
                     b_eredmeny[2]++;
                     break;
             }
-	        if (i == Integer.parseInt(futasszam)) {
+	        if (i == futasszam) {
                 long endTime = System.currentTimeMillis();
                 System.out.println(futasszam + ". futás " + (endTime - startTime) + " ezredmásodpercnél ért véget.");
-                futasszam += "0";
+                futasszam *= 10;
             }
         }
         System.out.println("\nB statisztikái:\nNyertes: " + b_eredmeny[0] +
@@ -45,30 +42,27 @@ public class Main {
      */
     private static int jatek() {
         LinkedList<Integer> sor = new LinkedList <>();
+        int sum = 0;
         for (int i = 0; i < 1_000; i ++){
-            sor.addLast(new Random().nextInt(10_000));
+            int rand = new Random().nextInt(9999) + 1;
+            sum += rand;
+            sor.addLast(rand);
         }
 
-        int a_szamai = 0, b_szamai = 0;
-
-        boolean a_jatekos_kore = false;
-        if(sor.getFirst() % 2 == 0){
-            a_jatekos_kore = true;
+        boolean a_kezd = false;
+        if(new Random().nextInt(2) == 0){
+            a_kezd = true;
         }
 
-        while(sor.size() != 0){
-            if (a_jatekos_kore){
-                if (sor.getFirst() > sor.getLast()){
-                    a_szamai += sor.removeFirst();
-                }else{
-                    a_szamai += sor.removeLast();
-                }
+        if (a_kezd){
+            if (sor.getFirst() > sor.getLast()){
+                sor.removeFirst();
             }else{
-                b_szamai += bStrategia(sor);
+                sor.removeLast();
             }
-            a_jatekos_kore = !a_jatekos_kore;
         }
-        return Integer.compare(b_szamai, a_szamai);
+
+        return Integer.compare(bStrategia(sor), sum / 2);
     }
 
     /**
@@ -77,9 +71,19 @@ public class Main {
      * @param sor amely tartalmazza a számokat
      * @return a sor utolsó elemével tér vissza
      */
-    private static int bStrategia(LinkedList <Integer> sor) {
+    private static int bStrategia(@NotNull LinkedList <Integer> sor) {
+        int[][] table = new int[sor.size()][sor.size()];
 
-        //return sor.getFirst();
-        return sor.removeLast();
+        for (int gap = 0; gap < sor.size(); ++gap) {
+            for (int i = 0, j = gap; j < sor.size(); ++i, ++j) {
+                int x = ((i + 2) <= j) ? table[i + 2][j] : 0;
+                int y = ((i + 1) <= (j - 1)) ? table[i + 1][j - 1] : 0;
+                int z = (i <= (j - 2)) ? table[i][j - 2] : 0;
+
+                table[i][j] = Math.max(sor.get(i) + Math.min(x, y), sor.get(j) + Math.min(y, z));
+            }
+        }
+
+        return table[0][sor.size() - 1];
     }
 }
